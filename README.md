@@ -8,12 +8,16 @@ This was the last light/lamp in my workbench area that's not controllable wirele
 
 It's a cheap LED desk lamp purchased from Amazon.com a while ago. 12V powered, color temperature and brightness tunable - via a capacitive button panel.
 
+<details><summary>Product image</summary>
 <table><tr><td>
 
 ![](./doc/images/lamp-amazon.png)
 _Image: Product page of the lamp_
 
 </td></tr></table>
+</details>
+
+
 
 ## The break-down
 
@@ -69,7 +73,7 @@ There is one technical problem - The control board operates on 5V (and so do the
 
 The only helpful information on `BF6961AS11` is from [a product page](http://www.yunzhan365.com/basic/84628136.html), which I read the IC can operate on 2.5V - 5.5V. If we power the control board with 3.3V, we can get have the ESP32 read the PWM at 3.3V (experiments approved this).
 
-However, the PWM@3.3V makes the LEDs slightly darker at full brightness, compare with the original PWM@5V. But since the brightness drop is not too significant, I would take this trade-off as oppose to dealing with fine-tuning the LED power drivers or level-shifting, or having the ESP runs at 5V which I treat it as a risk.
+However, the PWM@3v3 makes the LEDs slightly darker at full brightness, compare with the original PWM@5V. But since the brightness drop is not too significant, I would take this trade-off as oppose to dealing with fine-tuning the LED power drivers or level-shifting, or having the ESP runs at 5V which I treat it as a risk.
 
 <table><tr><td>
 
@@ -78,7 +82,7 @@ _Image: Testing with ESP32. ESP32 stands in between the two boards_
 
 </td></tr></table>
 
-The prototype circuit has worked. On the software-side, as the first-time user of ESPHome, I found it surprising simple to setup, and integrate to HA in just a snap. My ESPHome project is also included - it's a basic [`cwww`-typed light](https://esphome.io/components/light/cwww.html) setup, and which plays well with the dual-PWM outputs. There isn't too much surprise here, the only one thing that I also have documented (separately) is the conversion function from the dual-PWM values (read from the control board) to the [`cwww` overall brightness](https://esphome.io/components/light/index.html#light-turn-on-action). For more detail, see the [project math](./math/led-fitting.ipynb).
+The prototype circuit has worked. On the software-side, as the first-time user of ESPHome, I found it surprising simple to setup, and integrate to HA in just a snap. My ESPHome project is also included - it's a basic [`cwww`-typed light](https://esphome.io/components/light/cwww.html) setup, and which plays well with the dual-PWM outputs. There isn't too much surprise here, the only one thing that I also have documented (separately) is the conversion function from the dual-PWM values (read from the control board) to the [`cwww` overall brightness](https://esphome.io/components/light/index.html#light-turn-on-action). **For more detail, see the [project math](./math/led-fitting.ipynb)**.
 
 A late-stage issue was discovered, however, after I removed the USB downloading cable and wanted to test as whole. Although the power LED lit on the ESP32, it didn't seem to boot on (not connected to the host WiFi). By comparing the drawn current of the ESP32 and the original chip, I found the ESP32 requires current more one magnitude greater than the original control board (`BF6961AS11`)! I have good reasons to suspect the 12V-5V LDO circuit on the power board was not designed for such current.
 

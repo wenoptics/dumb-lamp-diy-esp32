@@ -1,0 +1,126 @@
+esphome:
+  name: workbench_light
+  
+  on_boot:
+    priority: -100
+    # At priority: -100, pretty much everything should already be initialized.
+    then:
+      - script.execute: sync_from_buttons
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+
+
+output:
+  # Output PWMs that actually controls the cold-white-warm-white LED panel
+  - platform: ledc
+    pin: GPIO26
+    id: gpio26_led_white
+    # frequency: 2000Hz
+  - platform: ledc
+    pin: GPIO18
+    id: gpio18_led_yellow
+
+light:
+
+  - platform: cwww
+    id: led_panel
+    name: "Workbench Light"
+    cold_white: gpio26_led_white
+    warm_white: gpio18_led_yellow
+    constant_brightness: true
+    cold_white_color_temperature: 6536 K
+    warm_white_color_temperature: 2000 K
+    restore_mode: ALWAYS_OFF
+    default_transition_length: 300ms
+    
+  - platform: status_led
+    name: "Onboard status LED"
+    pin: GPIO2
+    internal: true
+    
+    
+script:
+  - id: sync_from_buttons
+    # Synchronize light settings from the physical capacitive keys
+    then:
+    
+      if:
+        condition:
+          # If the both pwm lanes are near zero, we treat this as an shutdown command
+          lambda: 'return id(lamp_set_white_val).state < 4 && id(lamp_set_warm_val).state < 4;'
+        then:
+          - light.turn_off: led_panel
+        else:
+          - light.turn_on:
+              id: led_panel
+              cold_white: !lambda "return id(lamp_set_white_val).state / 100.0;"
+              warm_white: !lambda "return id(lamp_set_warm_val).state / 100.0;"
+              brightness: !lambda |-
+                double pc = id(lamp_set_white_val).state / 100.0;
+                double pw = id(lamp_set_warm_val).state / 100.0;
+                double a=-0.03992806, b=1.2732741, c=1.2732741, d=-0.2732741, e=-0.2732741, f=-1;
+                double x=pc, y=pw;
+                
+                // Use our polynomial surface fitting result
+                double val = a + b*x + c*y + d*(x*x) + e*(y*y) + f*x*y;
+                
+                // Clamp to the range of 0-1
+                val = val > 1 ? 1 : val;
+                val = val < 0 ? 0 : val;
+                
+                return val;
+    
+  
+sensor:
+  # These are the two orignal brightness signals from the lamp MCU (via user interaction with the capacitive keys)
+  - platform: duty_cycle
+    pin: GPIO25
+    id: lamp_set_white_val
+    update_interval: 200ms
+    internal: true
+    filters:
+      # Debounce the PWM readings
+      delta: 3
+    on_value:
+      - script.execute: sync_from_buttons
+
+  - platform: duty_cycle
+    pin: GPIO32
+    id: lamp_set_warm_val
+    update_interval: 200ms
+    internal: true
+    filters:
+      # Debounce the PWM readings
+      delta: 3
+    on_value:
+      - script.execute: sync_from_buttons
+
+
+# Enable logging
+logger:
+  logs:
+    duty_cycle: INFO
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "<example>"
+
+ota:
+  password: "b82e661079c5232980ce24b2275b26cf"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "WorkbenchLight Fallback Hotspot"
+    password: "<example>"
+
+captive_portal:
+    
