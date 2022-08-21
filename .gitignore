@@ -7,3 +7,6 @@ venv/
 
 # Python
 __pycache__/
+
+# IDE
+.vscode/
