@@ -4,12 +4,20 @@ Converting a cheap Amazon desk lamp to a smart lamp with `ESPHome`.
 
 This was the last light/lamp in my workbench area that's not controllable wirelessly, which was too annoying to have to walk by and turn off manually - _often time, I rely solely on scene and automation triggers to turn-off any workbench lights._ This weekend project makes yet another light integrated into my Home Assistant setup, with one of some ESP32 boards I have at hand.
 
+<table><tr><td align="center">
+
+![](./doc/images/homekit-demo.gif)
+<br>
+_Image: Control with Apple HomeKit_
+
+</td></tr></table>
+
 ## The lamp
 
 It's a cheap LED desk lamp purchased from Amazon.com a while ago. 12V powered, color temperature and brightness tunable - via a capacitive button panel.
 
 <details><summary>Product image</summary>
-<table><tr><td>
+<table><tr><td align="center">
 
 ![](./doc/images/lamp-amazon.png)
 _Image: Product page of the lamp_
@@ -27,9 +35,10 @@ Upon disassemble the lamp, there are two PCBs to be found. It turns out it has b
 
 
 
-<table><tr><td>
+<table><tr><td align="center">
 
 ![](./doc/images/IMG_8285.jpg)
+<br>
 _Image: The control board PCB_
 
 </td></tr></table>
@@ -75,9 +84,10 @@ The only helpful information on `BF6961AS11` is from [a product page](http://www
 
 However, the PWM@3v3 makes the LEDs slightly darker at full brightness, compare with the original PWM@5V. But since the brightness drop is not too significant, I would take this trade-off as oppose to dealing with fine-tuning the LED power drivers or level-shifting, or having the ESP runs at 5V which I treat it as a risk.
 
-<table><tr><td>
+<table><tr><td align="center">
 
 ![](./doc/images/IMG_8287.jpg)
+<br>
 _Image: Testing with ESP32. ESP32 stands in between the two boards_
 
 </td></tr></table>
@@ -90,9 +100,10 @@ I ended up running the 5V from the $V_{cc}$ of the USB - Yes, the lamp also come
 
 Now everything works.
 
-<table><tr><td>
+<table><tr><td align="center">
 
 ![](./doc/images/IMG_8300.jpg)
+<br>
 _Image: Before assemble the lamp with ESP32._
 
 </td></tr></table>
