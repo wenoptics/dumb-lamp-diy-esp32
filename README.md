@@ -2,6 +2,15 @@
 
 Converting a cheap Amazon desk lamp to a smart lamp with `ESPHome`.
 
+<br>
+
+See also:
+
+- ESPHome example config: [./workbench-lamp-esphome.yaml]()
+- Project math: [./math/led-fitting.ipynb]()
+
+---
+
 This was the last light/lamp in my workbench area that's not controllable wirelessly, which was too annoying to have to walk by and turn off manually - _often time, I rely solely on scene and automation triggers to turn-off any workbench lights._ This weekend project makes yet another light integrated into my Home Assistant setup, with one of some ESP32 boards I have at hand.
 
 <table><tr><td align="center">
