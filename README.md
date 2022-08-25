@@ -6,8 +6,8 @@ Converting a cheap Amazon desk lamp to a smart lamp with `ESPHome`.
 
 See also:
 
-- ESPHome example config: [./workbench-lamp-esphome.yaml]()
-- Project math: [./math/led-fitting.ipynb]()
+- ESPHome example config: [./workbench-lamp-esphome.yaml](./workbench-lamp-esphome.yaml)
+- Project math: [./math/led-fitting.ipynb](./math/led-fitting.ipynb)
 
 ---
 
